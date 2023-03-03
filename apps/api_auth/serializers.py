@@ -10,17 +10,17 @@ class LoginSerializer(serializers.Serializer):
       * password.
     It will try to authenticate the user with when validated.
     """
-    username = serializers.CharField(
-        label="Username",
-        write_only=True
-    )
-    password = serializers.CharField(
-        label="Password",
-        # This will be used when the DRF browsable API is enabled
-        style={'input_type': 'password'},
-        trim_whitespace=False,
-        write_only=True
-    )
+
+    username = serializers.CharField(label="Username", write_only=True)
+
+    password = serializers.CharField(label="Password",  # This will be used when the DRF browsable API is enabled
+                                     style={'input_type': 'password'}, trim_whitespace=False, write_only=True)
+
+    def update(self, instance, validated_data):
+        pass
+
+    def create(self, validated_data):
+        pass
 
     def validate(self, attrs):
         # Take username and password from request
@@ -29,8 +29,7 @@ class LoginSerializer(serializers.Serializer):
 
         if username and password:
             # Try to authenticate the user using Django auth framework.
-            user = authenticate(request=self.context.get('request'),
-                                username=username, password=password)
+            user = authenticate(request=self.context.get('request'), username=username, password=password)
             if not user:
                 # If we don't have a regular user, raise a ValidationError
                 msg = 'Access denied: wrong username or password.'
