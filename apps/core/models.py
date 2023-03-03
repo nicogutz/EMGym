@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 class Device(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     uid = models.CharField(max_length=10)
 
 
@@ -22,7 +23,7 @@ class Exercise(models.Model):
         ABS = 'AB', _('ABS')
         NA = 'NA', _('NOT SPECIFIED')
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    device = models.ForeignKey(Device, on_delete=models.CASCADE)
     muscle = models.CharField(max_length=2, choices=ExerciseType.choices, default=ExerciseType.NA)
     repetitions = models.IntegerField()
     exertion_value = models.FloatField()
