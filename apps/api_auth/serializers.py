@@ -1,6 +1,8 @@
 from django.contrib.auth import authenticate
-
+from django.contrib.auth.models import User
 from rest_framework import serializers
+
+from apps.core.models import Datum, Exercise, Device
 
 
 class LoginSerializer(serializers.Serializer):
@@ -41,3 +43,47 @@ class LoginSerializer(serializers.Serializer):
         # It will be used in the view.
         attrs['user'] = user
         return attrs
+
+
+class DeviceSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    uid = serializers.CharField(label="uid", required=True, max_length=10)
+
+    class Meta:
+        model = Device
+        fields = ('uid', 'user')
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.context['user'])
+
+
+class ExerciseSerializer(serializers.ModelSerializer):
+    muscle = serializers.ChoiceField(choices=Exercise.ExerciseType.choices, default=Exercise.ExerciseType.NA)
+    repetitions = serializers.IntegerField(label="repetitions", required=True)
+    exertion_value = serializers.FloatField(label="exertion_value", required=True)
+    uid = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = Exercise
+        fields = ('uid', 'muscle', 'repetitions', 'exertion_value')
+
+    def create(self, validated_data):
+        device_uid = validated_data.pop('uid')
+        device = Device.objects.get(uid=device_uid)
+        exercise = Exercise.objects.create(device=device, **validated_data)
+        return exercise
+
+class DataSerializer(serializers.ModelSerializer):
+    data_count = serializers.IntegerField(label="data_count", required=True)
+    value = serializers.FloatField(label="value", required=True)
+    exercise_id = serializers.IntegerField(required=True)
+    class Meta:
+        model = Datum
+        fields = ('exercise_id', 'data_count', 'value',)
+
+    def create(self, validated_data):
+        oefening = validated_data.pop('exercise_id')
+        exercise = Exercise.objects.get(pk=oefening)
+        datum = Datum.objects.create(exercise=exercise, **validated_data)
+        return datum
+

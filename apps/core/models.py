@@ -5,7 +5,10 @@ from django.utils.translation import gettext_lazy as _
 
 class Device(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    uid = models.CharField(max_length=10)
+    uid = models.CharField(max_length=10, unique=True)
+
+    def __abs__(self):
+        return self.user
 
 
 class Exercise(models.Model):
@@ -31,5 +34,5 @@ class Exercise(models.Model):
 
 class Datum(models.Model):
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
-    time_stamp = models.DateTimeField()
+    data_count = models.IntegerField()
     value = models.FloatField()
