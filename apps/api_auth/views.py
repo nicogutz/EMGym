@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from . import serializers
-from .serializers import DataSerializer, ExerciseSerializer, DeviceSerializer
+from .serializers import ExerciseSerializer, DeviceSerializer, DatumSerializer
 
 # dario
 
@@ -67,7 +67,6 @@ class DeviceView(mixins.RetrieveModelMixin,
                  generics.GenericAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = DeviceSerializer
-    allowed_methods = ('GET',)
     queryset = Device.objects.all()
 
     def get(self, request, *args, **kwargs):
@@ -78,83 +77,72 @@ class DeviceView(mixins.RetrieveModelMixin,
         data = self.serializer_class(obj).data
         return Response(data, status=status.HTTP_200_OK)
 
-# class DeviceCreate(CreateAPIView):
-#     permission_classes = [permissions.AllowAny]
-#     serializer_class = DeviceSerializer
-#     allowed_methods = ('POST',)z
-#     queryset = Device.objects.all()
-#
-#
-# class DeviceView(ListAPIView):
-#     permission_classes = [permissions.AllowAny]
-#     serializer_class = DeviceSerializer
-#     allowed_methods = ('POST', 'GET')
-#     queryset = Device.objects.all()
-#
-#
-# class DeviceDestroy(DestroyAPIView):
-#     permission_classes = [permissions.AllowAny]
-#     serializer_class = DeviceSerializer
-#     allowed_methods = ('DELETE', 'GET')
-#
-#     def get_object(self):
-#         queryset = Device.objects.all()
-#         obj = queryset.get(uid=self.kwargs['uid'])
-#         return obj
-
-
-class DatumCreate(CreateAPIView):
-    permission_classes = [permissions.AllowAny]
-    serializer_class = DataSerializer
-    allowed_methods = ('POST',)
-    queryset = Datum.objects.all()
-
-
-class DatumView(ListAPIView):
-    permission_classes = [permissions.AllowAny]
-    serializer_class = DataSerializer
-    allowed_methods = ('POST', 'GET')
-    queryset = Datum.objects.all()
-
-
-class DatumDestroy(DestroyAPIView):
-    permission_classes = [permissions.AllowAny]
-    serializer_class = DataSerializer
-    allowed_methods = ('DELETE', 'GET')
-
-    def get_object(self):
-        queryset = Datum.objects.all()
-        obj = queryset.get(data_count=self.kwargs['data_count'])
-        return obj
-
 
 class ExerciseCreate(CreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = ExerciseSerializer
     allowed_methods = ('POST',)
     queryset = Exercise.objects.all()
+#
+#
+# class ExerciseView(ListAPIView):
+#     permission_classes = [permissions.AllowAny]
+#     serializer_class = ExerciseSerializer
+#     allowed_methods = ('POST',)
+#     queryset = Exercise.objects.all()
+#
+#
+# class ExerciseDestroy(DestroyAPIView):
+#     permission_classes = [permissions.AllowAny]
+#     serializer_class = ExerciseSerializer
+#     allowed_methods = ('DELETE', 'GET')
+#
+#     def get_object(self):
+#         queryset = Exercise.objects.all()
+#         obj = queryset.get(device_id=self.kwargs['pk'])
+#         return obj
+#
+#
+# class ExerciseUpdate(UpdateAPIView):
+#     permission_classes = [permissions.AllowAny]
+#     serializer_class = ExerciseSerializer
+#     allowed_methods = ('POST',)
+#     queryset = Exercise.objects.all()
 
-
-class ExerciseView(ListAPIView):
+class DatumView(mixins.CreateModelMixin,
+                generics.GenericAPIView):
     permission_classes = [permissions.AllowAny]
-    serializer_class = ExerciseSerializer
+    serializer_class = DatumSerializer
     allowed_methods = ('POST',)
-    queryset = Exercise.objects.all()
+    queryset = Datum.objects.all()
+
+    def post(self, request, *args, **kwargs):
+        pass
 
 
-class ExerciseDestroy(DestroyAPIView):
-    permission_classes = [permissions.AllowAny]
-    serializer_class = ExerciseSerializer
-    allowed_methods = ('DELETE', 'GET')
+# class DatumCreate(CreateAPIView):
+#     permission_classes = [permissions.AllowAny]
+#     serializer_class = DataSerializer
+#     allowed_methods = ('POST',)
+#     queryset = Datum.objects.all()
+#
+#
+# class DatumView(ListAPIView):
+#     permission_classes = [permissions.AllowAny]
+#     serializer_class = DataSerializer
+#     allowed_methods = ('POST', 'GET')
+#     queryset = Datum.objects.all()
+#
+#
+# class DatumDestroy(DestroyAPIView):
+#     permission_classes = [permissions.AllowAny]
+#     serializer_class = DataSerializer
+#     allowed_methods = ('DELETE', 'GET')
+#
+#     def get_object(self):
+#         queryset = Datum.objects.all()
+#         obj = queryset.get(data_count=self.kwargs['data_count'])
+#         return obj
+#
+#
 
-    def get_object(self):
-        queryset = Exercise.objects.all()
-        obj = queryset.get(device_id=self.kwargs['pk'])
-        return obj
-
-
-class ExerciseUpdate(UpdateAPIView):
-    permission_classes = [permissions.AllowAny]
-    serializer_class = ExerciseSerializer
-    allowed_methods = ('POST',)
-    queryset = Exercise.objects.all()
