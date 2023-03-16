@@ -24,11 +24,11 @@ from apps.core.views import HomeView
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="HomeStretch API",
+        title="EM-Gym API",
         default_version='v1',
-        description="The api docs for HomeStretch",
+        description="The api docs for EM-Gym",
         terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="admin@homestretch.be"),
+        contact=openapi.Contact(email="nicolas.gutierrezsuarez@student.kuleuven.be"),
         license=openapi.License(name="All rights reserved"),
     ),
     public=False,

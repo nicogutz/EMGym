@@ -1,5 +1,6 @@
 from django.contrib.auth import login, logout
-from rest_framework import permissions, status
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework import permissions, status, generics, mixins
 from rest_framework.generics import GenericAPIView, RetrieveAPIView, ListAPIView, DestroyAPIView, UpdateAPIView, \
     CreateAPIView
 from rest_framework.response import Response
@@ -48,7 +49,7 @@ class LogoutView(APIView):
         return JsonResponse({'detail': 'Successfully logged out.'})
 
 
-class LoginView(GenericAPIView):
+class LoginView(generics.GenericAPIView):
     # This view should be accessible also for unauthenticated users.
     permission_classes = [permissions.AllowAny]
     serializer_class = serializers.LoginSerializer
@@ -62,29 +63,44 @@ class LoginView(GenericAPIView):
         return Response(None, status=status.HTTP_202_ACCEPTED)
 
 
-class DeviceCreate(CreateAPIView):
+class DeviceView(mixins.RetrieveModelMixin,
+                 generics.GenericAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = DeviceSerializer
-    allowed_methods = ('POST')
+    allowed_methods = ('GET',)
     queryset = Device.objects.all()
 
+    def get(self, request, *args, **kwargs):
+        try:
+            obj = self.queryset.get(uid=self.kwargs['uid'])
+        except ObjectDoesNotExist:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        data = self.serializer_class(obj).data
+        return Response(data, status=status.HTTP_200_OK)
 
-class DeviceView(ListAPIView):
-    permission_classes = [permissions.AllowAny]
-    serializer_class = DeviceSerializer
-    allowed_methods = ('POST', 'GET')
-    queryset = Device.objects.all()
-
-
-class DeviceDestroy(DestroyAPIView):
-    permission_classes = [permissions.AllowAny]
-    serializer_class = DeviceSerializer
-    allowed_methods = ('DELETE', 'GET')
-
-    def get_object(self):
-        queryset = Device.objects.all()
-        obj = queryset.get(uid=self.kwargs['uid'])
-        return obj
+# class DeviceCreate(CreateAPIView):
+#     permission_classes = [permissions.AllowAny]
+#     serializer_class = DeviceSerializer
+#     allowed_methods = ('POST',)z
+#     queryset = Device.objects.all()
+#
+#
+# class DeviceView(ListAPIView):
+#     permission_classes = [permissions.AllowAny]
+#     serializer_class = DeviceSerializer
+#     allowed_methods = ('POST', 'GET')
+#     queryset = Device.objects.all()
+#
+#
+# class DeviceDestroy(DestroyAPIView):
+#     permission_classes = [permissions.AllowAny]
+#     serializer_class = DeviceSerializer
+#     allowed_methods = ('DELETE', 'GET')
+#
+#     def get_object(self):
+#         queryset = Device.objects.all()
+#         obj = queryset.get(uid=self.kwargs['uid'])
+#         return obj
 
 
 class DatumCreate(CreateAPIView):
