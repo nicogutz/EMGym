@@ -83,66 +83,10 @@ class ExerciseCreate(CreateAPIView):
     serializer_class = ExerciseSerializer
     allowed_methods = ('POST',)
     queryset = Exercise.objects.all()
-#
-#
-# class ExerciseView(ListAPIView):
-#     permission_classes = [permissions.AllowAny]
-#     serializer_class = ExerciseSerializer
-#     allowed_methods = ('POST',)
-#     queryset = Exercise.objects.all()
-#
-#
-# class ExerciseDestroy(DestroyAPIView):
-#     permission_classes = [permissions.AllowAny]
-#     serializer_class = ExerciseSerializer
-#     allowed_methods = ('DELETE', 'GET')
-#
-#     def get_object(self):
-#         queryset = Exercise.objects.all()
-#         obj = queryset.get(device_id=self.kwargs['pk'])
-#         return obj
-#
-#
-# class ExerciseUpdate(UpdateAPIView):
-#     permission_classes = [permissions.AllowAny]
-#     serializer_class = ExerciseSerializer
-#     allowed_methods = ('POST',)
-#     queryset = Exercise.objects.all()
 
-class DatumView(mixins.CreateModelMixin,
-                generics.GenericAPIView):
+
+class DatumCreate(generics.ListCreateAPIView):
     permission_classes = [permissions.AllowAny]
     serializer_class = DatumSerializer
-    allowed_methods = ('POST',)
     queryset = Datum.objects.all()
-
-    def post(self, request, *args, **kwargs):
-        pass
-
-
-# class DatumCreate(CreateAPIView):
-#     permission_classes = [permissions.AllowAny]
-#     serializer_class = DataSerializer
-#     allowed_methods = ('POST',)
-#     queryset = Datum.objects.all()
-#
-#
-# class DatumView(ListAPIView):
-#     permission_classes = [permissions.AllowAny]
-#     serializer_class = DataSerializer
-#     allowed_methods = ('POST', 'GET')
-#     queryset = Datum.objects.all()
-#
-#
-# class DatumDestroy(DestroyAPIView):
-#     permission_classes = [permissions.AllowAny]
-#     serializer_class = DataSerializer
-#     allowed_methods = ('DELETE', 'GET')
-#
-#     def get_object(self):
-#         queryset = Datum.objects.all()
-#         obj = queryset.get(data_count=self.kwargs['data_count'])
-#         return obj
-#
-#
 

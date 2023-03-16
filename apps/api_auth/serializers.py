@@ -60,13 +60,14 @@ class DeviceSerializer(serializers.ModelSerializer):
 class ExerciseSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     muscle = serializers.ChoiceField(choices=Exercise.ExerciseType.choices, default=Exercise.ExerciseType.NA)
+    timestamp = serializers.DateTimeField(required=True)
     repetitions = serializers.IntegerField(label="repetitions", required=True)
     exertion_value = serializers.FloatField(label="exertion_value", required=True)
     uid = serializers.CharField(write_only=True)
 
     class Meta:
         model = Exercise
-        fields = ('id', 'uid', 'muscle', 'repetitions', 'exertion_value')
+        fields = ('id', 'uid', 'muscle', 'repetitions', 'exertion_value', 'timestamp')
 
     def create(self, validated_data):
         device = Device.objects.get(uid=validated_data.pop('uid'))
