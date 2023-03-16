@@ -1,20 +1,19 @@
 from django.contrib.auth import login, logout
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework import permissions, status, generics, mixins
-from rest_framework.generics import GenericAPIView, RetrieveAPIView, ListAPIView, DestroyAPIView, UpdateAPIView, \
-    CreateAPIView
-from rest_framework.response import Response
 from django.http import JsonResponse
+from rest_framework import permissions, status, generics, mixins
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from . import serializers
-from .serializers import ExerciseSerializer, DeviceSerializer, DatumSerializer, ListDatumSerializer
+from .serializers import ExerciseSerializer, DeviceSerializer, ListDatumSerializer
+from ..core.models import Datum, Exercise, Device
+
 
 # dario
-
-from ..core.models import Datum, Exercise, Device
 
 
 class SessionView(APIView):
@@ -90,4 +89,3 @@ class DatumCreate(generics.ListCreateAPIView):
     serializer_class = ListDatumSerializer
     allowed_methods = ('POST',)
     queryset = Datum.objects.all()
-
