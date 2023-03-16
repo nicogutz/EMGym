@@ -99,7 +99,7 @@ class ListDatumSerializer(serializers.ListSerializer):
 
         result = [Datum.objects.create(exercise=exercise, **datum) for datum in validated_data]
         try:
-            self.child.Meta.model.objects.bulk_create(result)
+            self.child.Meta.model.objects.bulk_create(result, ignore_conflicts=True)
         except IntegrityError as e:
             raise ValidationError(e)
 

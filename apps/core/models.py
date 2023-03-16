@@ -26,14 +26,17 @@ class Exercise(models.Model):
         ABDOMINAL = 'AB', _('Abdominal')
         NA = 'NA', _('Not Specified')
 
+    models.UniqueConstraint(fields=['device', 'timestamp'], name='unique_booking')
+
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
     muscle = models.CharField(max_length=2, choices=ExerciseType.choices, default=ExerciseType.NA)
-    timestamp = models.DateTimeField()
+    timestamp = models.DateTimeField(null=False)
     repetitions = models.IntegerField()
     exertion_value = models.FloatField()
 
 
 class Datum(models.Model):
+    models.UniqueConstraint(fields=['exercise', 'data_count'], name='unique_booking')
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
     data_count = models.IntegerField()
     value = models.FloatField()
