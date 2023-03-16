@@ -1,5 +1,7 @@
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from rest_framework import serializers
 
 from apps.core.models import Datum, Exercise, Device
@@ -82,9 +84,23 @@ class DatumSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Datum
+        # list_serializer_class = ListDatumSerializer(many=True)
         fields = ('exercise_id', 'data_count', 'value',)
 
+
+class ListDatumSerializer(serializers.ListSerializer):
+    child = DatumSerializer()
+
+    def update(self, instance, validated_data):
+        pass
+
     def create(self, validated_data):
-        exercise = Exercise.objects.get(pk=validated_data.pop('exercise_id'))
-        datum = Datum.objects.create(exercise=exercise, **validated_data)
-        return datum
+        exercise = Exercise.objects.get(pk=validated_data[0].get('exercise_id'))
+
+        result = [Datum.objects.create(exercise=exercise, **datum) for datum in validated_data]
+        try:
+            self.child.Meta.model.objects.bulk_create(result)
+        except IntegrityError as e:
+            raise ValidationError(e)
+
+        return result

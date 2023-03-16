@@ -10,7 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
 from . import serializers
-from .serializers import ExerciseSerializer, DeviceSerializer, DatumSerializer
+from .serializers import ExerciseSerializer, DeviceSerializer, DatumSerializer, ListDatumSerializer
 
 # dario
 
@@ -87,6 +87,7 @@ class ExerciseCreate(CreateAPIView):
 
 class DatumCreate(generics.ListCreateAPIView):
     permission_classes = [permissions.AllowAny]
-    serializer_class = DatumSerializer
+    serializer_class = ListDatumSerializer
+    allowed_methods = ('POST',)
     queryset = Datum.objects.all()
 
