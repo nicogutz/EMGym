@@ -71,8 +71,8 @@
     <!-- Custom styles for this template -->
     <link href="{% static 'dashboard/dashboard.css' %}" rel="stylesheet">
 </head>
-<body>
 
+<body>
 <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
     <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="#">EM-Gym</a>
     <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse"
@@ -89,9 +89,21 @@
     </div>
 </header>
 
-
 <div class="container-fluid">
-    <div class="row">
+    <!-- Alerts -->
+    <div>
+        {% if is_successful is True %}
+            <div class="alert alert-success" role="alert">
+                Successfully added device!
+            </div>
+        {% elif is_successful is False %}
+            <div class="alert alert-danger" role="alert">
+                Device exists already!
+            </div>
+        {% endif %}
+    </div>
+
+    <main class="row">
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center m-3 border-bottom">
             <h1 class="h2">Exercises</h1>
         </div>
@@ -100,7 +112,7 @@
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center m-3 border-bottom">
             <h1 class="h2">Plot</h1>
         </div>
-    </div>
+    </main>
 
     <!-- Modal -->
     <div class="modal fade show" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -112,22 +124,26 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form method="post">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label for="exampleFormControlInput1">Please input the device ID</label>
-                            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="XXXXXX">
+                    <div class="form-group">
+                        <form method="post" action="." enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <label for="deviceIDForm">Please input the device ID</label>
+                            <input type="text" class="form-control" id="deviceIDForm" name="uid" placeholder="XXXXXX">
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             </div>
-                        </div>
-                    </form>
+
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
 </div>
+
+
+
 
 
 <script src="{% static 'assets/dist/js/bootstrap.bundle.min.js' %}"></script>
