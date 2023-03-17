@@ -6,7 +6,7 @@ from django.views import generic
 from django.shortcuts import redirect, render
 from django.contrib.auth.mixins import LoginRequiredMixin
 from apps.core import models
-
+from apps.core.utils.generate_plot import generate_plot
 
 class SignUpView(generic.CreateView):
     form_class = UserCreationForm
@@ -28,7 +28,7 @@ class HomeView(LoginRequiredMixin, generic.View):
         except ObjectDoesNotExist:
             device = None
 
-        return render(request, self.template_name, {"device": device})
+        return render(request, self.template_name, {"device": device, "plot_div": generate_plot()})
 
     def post(self, request, *args, **kwargs):
 

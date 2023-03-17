@@ -1,7 +1,4 @@
 Django
-django_redis
-djangorestframework~=3.14.0
+djangorestframework
 drf_yasg
-celery
-redis
-psycopg2-binary
+plotly
