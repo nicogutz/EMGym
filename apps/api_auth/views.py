@@ -55,7 +55,7 @@ class LoginView(generics.GenericAPIView):
     allowed_methods = ('POST',)
 
     def post(self, request):
-        serializer = serializers.LoginSerializer(data=self.request.data, context={'request': self.request})
+        serializer = self.serializer_class(data=self.request.data, context={'request': self.request})
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         login(request, user)
