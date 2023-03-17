@@ -74,7 +74,7 @@ class DeviceView(mixins.RetrieveModelMixin,
         except ObjectDoesNotExist:
             return Response(status=status.HTTP_204_NO_CONTENT)
         data = self.serializer_class(obj).data
-        return Response(data, status=status.HTTP_200_OK)
+        return Response({"Device Exists"}, status=status.HTTP_200_OK)
 
 
 class ExerciseCreate(CreateAPIView):

@@ -26,7 +26,8 @@ class Exercise(models.Model):
         ABDOMINAL = 'AB', _('Abdominal')
         NA = 'NA', _('Not Specified')
 
-    models.UniqueConstraint(fields=['device', 'timestamp'], name='unique_booking')
+    class Meta:
+        unique_together = ['device', 'timestamp']
 
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
     muscle = models.CharField(max_length=2, choices=ExerciseType.choices, default=ExerciseType.NA)
@@ -36,7 +37,9 @@ class Exercise(models.Model):
 
 
 class Datum(models.Model):
-    models.UniqueConstraint(fields=['exercise', 'data_count'], name='unique_booking')
+    class Meta:
+        unique_together = ['exercise', 'data_count']
+
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE)
     data_count = models.IntegerField()
     value = models.FloatField()
