@@ -13,24 +13,24 @@ class Device(models.Model):
 
 class Exercise(models.Model):
     class ExerciseType(models.TextChoices):
-        QUADRICEPS = 'QU', _('Quadriceps')
-        HAMSTRINGS = 'HA', _('Hamstrings')
-        SHOULDERS = 'SH', _('Shoulders')
-        FOREARMS = 'FO', _('Forearms')
-        GLUTEUS = 'GL', _('Gluteus')
-        BACK = 'BA', _('Back')
-        CHEST = 'CH', _('Chest')
-        CALVES = 'CA', _('Calves')
-        TRICEPS = 'TR', _('Triceps')
-        BICEPS = 'BI', _('Biceps')
-        ABDOMINAL = 'AB', _('Abdominal')
+        QUADRICEPS = 'QUADRICEPS', _('Quadriceps')
+        HAMSTRINGS = 'HAMSTRINGS', _('Hamstrings')
+        SHOULDERS = 'SHOULDERS', _('Shoulders')
+        FOREARMS = 'FOREARMS', _('Forearms')
+        GLUTEUS = 'GLUTEUS', _('Gluteus')
+        BACK = 'BACK', _('Back')
+        CHEST = 'CHEST', _('Chest')
+        CALVES = 'CALVES', _('Calves')
+        TRICEPS = 'TRICEPS', _('Triceps')
+        BICEPS = 'BICEPS', _('Biceps')
+        ABDOMINAL = 'ABDOMINAL', _('Abdominal')
         NA = 'NA', _('Not Specified')
 
     class Meta:
         unique_together = ['device', 'timestamp']
 
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
-    muscle = models.CharField(max_length=2, choices=ExerciseType.choices, default=ExerciseType.NA)
+    muscle = models.CharField(max_length=15, choices=ExerciseType.choices, default=ExerciseType.NA)
     timestamp = models.DateTimeField(null=False)
     repetitions = models.IntegerField()
     exertion_value = models.FloatField()
