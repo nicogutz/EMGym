@@ -8,6 +8,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from apps.core import models
 from apps.core.utils.generate_plot import generate_plot
 
+
 class SignUpView(generic.CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy("login")
@@ -23,12 +24,19 @@ class HomeView(LoginRequiredMixin, generic.View):
     template_name = "index.html"
 
     def get(self, request, *args, **kwargs):
+        import json
+
         try:
             device = models.Device.objects.get(user=request.user)
         except ObjectDoesNotExist:
             device = None
 
-        return render(request, self.template_name, {"device": device, "plot_div": generate_plot()})
+        try:
+            exercises = list(models.Exercise.objects.filter(device=device).values())
+        except ObjectDoesNotExist:
+            exercises = []
+        return render(request, self.template_name,
+                      {"device": device, "plot_div": generate_plot(), 'exercises': json.dumps(exercises, default=str)})
 
     def post(self, request, *args, **kwargs):
 

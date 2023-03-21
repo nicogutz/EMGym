@@ -29,6 +29,7 @@ class Exercise(models.Model):
     class Meta:
         unique_together = ['device', 'timestamp']
 
+    id = models.IntegerField(primary_key=True)
     device = models.ForeignKey(Device, on_delete=models.CASCADE)
     muscle = models.CharField(max_length=15, choices=ExerciseType.choices, default=ExerciseType.NA)
     timestamp = models.DateTimeField(null=False)
