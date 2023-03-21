@@ -97,7 +97,21 @@ class ListDatumSerializer(serializers.ListSerializer):
     def create(self, validated_data):
         exercise = Exercise.objects.get(pk=validated_data[0].get('exercise_id'))
 
-        result = [Datum.objects.create(exercise=exercise, **datum) for datum in validated_data]
+        from scipy.signal import savgol_filter, find_peaks
+        from scipy import integrate
+        import pandas as pd
+
+        df = pd.DataFrame(validated_data)
+        df.value = savgol_filter(df.value.rolling(5).mean(), 15, 3)
+        df.value = df.value.fillna(0)
+
+        exercise.repetitions = find_peaks(df.value, prominence=0.1)[0].size
+        exercise.exertion_value = integrate.trapz(df.value, df.data_count) / exercise.repetitions
+
+        exercise.save()
+
+        result = [Datum.objects.create(**datum) for datum in df.to_dict('records')]
+
         try:
             self.child.Meta.model.objects.bulk_create(result, ignore_conflicts=True)
         except IntegrityError as e:
