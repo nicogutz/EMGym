@@ -17,8 +17,12 @@ class LoginSerializer(serializers.Serializer):
 
     username = serializers.CharField(label="Username", write_only=True)
 
-    password = serializers.CharField(label="Password",  # This will be used when the DRF browsable API is enabled
-                                     style={'input_type': 'password'}, trim_whitespace=False, write_only=True)
+    password = serializers.CharField(
+        label="Password",  # This will be used when the DRF browsable API is enabled
+        style={"input_type": "password"},
+        trim_whitespace=False,
+        write_only=True,
+    )
 
     def update(self, instance, validated_data):
         pass
@@ -28,22 +32,26 @@ class LoginSerializer(serializers.Serializer):
 
     def validate(self, attrs):
         # Take username and password from request
-        username = attrs.get('username')
-        password = attrs.get('password')
+        username = attrs.get("username")
+        password = attrs.get("password")
 
         if username and password:
             # Try to authenticate the user using Django auth framework.
-            user = authenticate(request=self.context.get('request'), username=username, password=password)
+            user = authenticate(
+                request=self.context.get("request"),
+                username=username,
+                password=password,
+            )
             if not user:
                 # If we don't have a regular user, raise a ValidationError
-                msg = 'Access denied: wrong username or password.'
-                raise serializers.ValidationError(msg, code='authorization')
+                msg = "Access denied: wrong username or password."
+                raise serializers.ValidationError(msg, code="authorization")
         else:
             msg = 'Both "username" and "password" are required.'
-            raise serializers.ValidationError(msg, code='authorization')
+            raise serializers.ValidationError(msg, code="authorization")
         # We have a valid user, put it in the serializer's validated_data.
         # It will be used in the view.
-        attrs['user'] = user
+        attrs["user"] = user
         return attrs
 
 
@@ -53,15 +61,17 @@ class DeviceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Device
-        fields = ('uid', 'user')
+        fields = ("uid", "user")
 
     def perform_create(self, serializer):
-        serializer.save(user=self.context['user'])
+        serializer.save(user=self.context["user"])
 
 
 class ExerciseSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
-    muscle = serializers.ChoiceField(choices=Exercise.ExerciseType.choices, default=Exercise.ExerciseType.NA)
+    muscle = serializers.ChoiceField(
+        choices=Exercise.ExerciseType.choices, default=Exercise.ExerciseType.NA
+    )
     timestamp = serializers.DateTimeField(required=True)
     repetitions = serializers.IntegerField(label="repetitions", required=True)
     exertion_value = serializers.FloatField(label="exertion_value", required=True)
@@ -69,10 +79,10 @@ class ExerciseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Exercise
-        fields = ('id', 'uid', 'muscle', 'repetitions', 'exertion_value', 'timestamp')
+        fields = ("id", "uid", "muscle", "repetitions", "exertion_value", "timestamp")
 
     def create(self, validated_data):
-        device = Device.objects.get(uid=validated_data.pop('uid'))
+        device = Device.objects.get(uid=validated_data.pop("uid"))
         exercise = Exercise.objects.create(device=device, **validated_data)
         return exercise
 
@@ -85,7 +95,11 @@ class DatumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Datum
         # list_serializer_class = ListDatumSerializer(many=True)
-        fields = ('exercise_id', 'data_count', 'value',)
+        fields = (
+            "exercise_id",
+            "data_count",
+            "value",
+        )
 
 
 class ListDatumSerializer(serializers.ListSerializer):
@@ -95,7 +109,7 @@ class ListDatumSerializer(serializers.ListSerializer):
         pass
 
     def create(self, validated_data):
-        exercise = Exercise.objects.get(pk=validated_data[0].get('exercise_id'))
+        exercise = Exercise.objects.get(pk=validated_data[0].get("exercise_id"))
 
         from scipy.signal import savgol_filter, find_peaks
         from scipy import integrate
@@ -106,11 +120,13 @@ class ListDatumSerializer(serializers.ListSerializer):
         df.value = df.value.fillna(0)
 
         exercise.repetitions = find_peaks(df.value, prominence=0.1)[0].size
-        exercise.exertion_value = integrate.trapz(df.value, df.data_count) / exercise.repetitions
+        exercise.exertion_value = (
+            integrate.trapz(df.value, df.data_count) / exercise.repetitions
+        )
 
         exercise.save()
 
-        result = [Datum.objects.create(**datum) for datum in df.to_dict('records')]
+        result = [Datum.objects.create(**datum) for datum in df.to_dict("records")]
 
         try:
             self.child.Meta.model.objects.bulk_create(result, ignore_conflicts=True)

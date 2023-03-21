@@ -26,7 +26,6 @@ class HomeView(LoginRequiredMixin, generic.View):
     template_name = "index.html"
 
     def get(self, request, *args, **kwargs):
-
         try:
             device = models.Device.objects.get(user=request.user)
         except ObjectDoesNotExist:
@@ -37,9 +36,15 @@ class HomeView(LoginRequiredMixin, generic.View):
         except ObjectDoesNotExist:
             exercises = []
 
-        return render(request, self.template_name,
-                      {"device": device, "plot_div": generate_plot(pd.DataFrame()),
-                       "exercises": json.dumps(exercises, default=str)})
+        return render(
+            request,
+            self.template_name,
+            {
+                "device": device,
+                "plot_div": generate_plot(pd.DataFrame()),
+                "exercises": json.dumps(exercises, default=str),
+            },
+        )
 
     def post(self, request, *args, **kwargs):
         try:
@@ -47,13 +52,23 @@ class HomeView(LoginRequiredMixin, generic.View):
             try:
                 device.save()
             except IntegrityError:
-                return render(request, self.template_name, {"device": device, "is_successful": False})
+                return render(
+                    request,
+                    self.template_name,
+                    {"device": device, "is_successful": False},
+                )
 
-            return render(request, self.template_name, {"device": device, "is_successful": True})
+            return render(
+                request, self.template_name, {"device": device, "is_successful": True}
+            )
         except KeyError:
             pass
         try:
-            data = list(models.Datum.objects.filter(exercise_id=request.POST["exercise_id"]).values())
+            data = list(
+                models.Datum.objects.filter(
+                    exercise_id=request.POST["exercise_id"]
+                ).values()
+            )
         except ObjectDoesNotExist:
             data = []
 
@@ -64,6 +79,13 @@ class HomeView(LoginRequiredMixin, generic.View):
             df = pd.DataFrame(data)[["data_count", "value"]].set_index("data_count")
         except KeyError:
             df = pd.DataFrame()
-        return render(request, self.template_name,
-                      {"device": True, "is_successful": None, "plot_div": generate_plot(df),
-                       "exercises": json.dumps(exercises, default=str)})
+        return render(
+            request,
+            self.template_name,
+            {
+                "device": True,
+                "is_successful": None,
+                "plot_div": generate_plot(df),
+                "exercises": json.dumps(exercises, default=str),
+            },
+        )
