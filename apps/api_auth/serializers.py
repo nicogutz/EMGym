@@ -102,7 +102,7 @@ class ListDatumSerializer(serializers.ListSerializer):
         import pandas as pd
 
         df = pd.DataFrame(validated_data)
-        df.value = savgol_filter(df.value.rolling(5).mean(), 15, 3)
+        df.value = savgol_filter(df.value.rolling(3).mean(), 12, 3)
         df.value = df.value.fillna(0)
 
         exercise.repetitions = find_peaks(df.value, prominence=0.1)[0].size
