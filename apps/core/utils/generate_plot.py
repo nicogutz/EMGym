@@ -1,9 +1,7 @@
 from plotly.offline import plot
-import plotly.graph_objs as go
+import plotly.express as px
 
 
-def generate_plot():
-    fig = go.Figure()
-    scatter = go.Scatter(x=[0, 1, 2, 3], y=[0, 1, 2, 3], mode='lines', name='test', opacity=0.8)
-    fig.add_trace(scatter)
+def generate_plot(df):
+    fig = px.line(df, template='seaborn', markers=True)
     return plot(fig, output_type='div')

@@ -16,6 +16,7 @@ class Exercise(models.Model):
         QUADRICEPS = 'QUADRICEPS', _('Quadriceps')
         HAMSTRINGS = 'HAMSTRINGS', _('Hamstrings')
         SHOULDERS = 'SHOULDERS', _('Shoulders')
+        ABDOMINAL = 'ABDOMINAL', _('Abdominal')
         FOREARMS = 'FOREARMS', _('Forearms')
         GLUTEUS = 'GLUTEUS', _('Gluteus')
         BACK = 'BACK', _('Back')
@@ -23,7 +24,6 @@ class Exercise(models.Model):
         CALVES = 'CALVES', _('Calves')
         TRICEPS = 'TRICEPS', _('Triceps')
         BICEPS = 'BICEPS', _('Biceps')
-        ABDOMINAL = 'ABDOMINAL', _('Abdominal')
         NA = 'NA', _('Not Specified')
 
     class Meta:

@@ -164,8 +164,32 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
         integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
         crossorigin="anonymous"></script>
+<script src="https://moment.github.io/luxon/global/luxon.min.js"></script>
 
 <script type="text/javascript">
+    function post(path, params, method = 'post') {
+
+        // The rest of this code assumes you are not using a library.
+        // It can be made less verbose if you use one.
+        const form = document.createElement('form');
+        form.method = method;
+        form.action = path;
+
+        for (const key in params) {
+            if (params.hasOwnProperty(key)) {
+                const hiddenField = document.createElement('input');
+                hiddenField.type = 'hidden';
+                hiddenField.name = key;
+                hiddenField.value = params[key];
+
+                form.appendChild(hiddenField);
+            }
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
     {% if device is None %}
         window.onload = () => {
             $('#staticBackdrop').modal('show');
@@ -181,15 +205,32 @@
         columns: [ //Define Table Columns
             {title: "Muscle", field: "muscle", width: 150},
             {title: "Repetitions", field: "repetitions"},
-            {title: "Exertion Value", field: "exertion_value", hozAlign: "left", formatter: "progress"},
-            {title: "Date and Time", field: "timestamp", sorter: "date", hozAlign: "center"},
+            {
+                title: "Exertion Value", field: "exertion_value", hozAlign: "left", formatter: "progress",
+                formatterParams: {
+                    min: 0,
+                    max: 20,
+                    color: ["yellow", "orange", "green"],
+                    legendColor: "black",
+                    legendAlign: "left",
+                }
+            },
+            {
+                title: "Date and Time", field: "timestamp", sorter: "datetime", formatterParams: {
+                    inputFormat: "iso",
+                }
+            },
         ],
     });
 
-    //trigger an alert message when the row is clicked
+    //trigger when the row is clicked
     table.on("rowClick", function (e, row) {
-        alert("Row " + row.getData().id + " Clicked!!!!");
-    });
+        post('.', {
+            exercise_id: row.getData().id,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        });
+    })
+    ;
 </script>
 
 </body>
