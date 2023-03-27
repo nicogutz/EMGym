@@ -133,7 +133,8 @@
                         <form method="post" action="." enctype="multipart/form-data">
                             {% csrf_token %}
                             <label for="deviceIDForm">Please input the device ID</label>
-                            <input type="text" class="form-control" id="deviceIDForm" name="uid" placeholder="XXXXXX">
+                            <input type="text" class="form-control" id="deviceIDForm" name="uid" maxlength="6"
+                                   placeholder="XXXXXX">
                             <div class="modal-footer">
                                 <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">Submit</button>
                             </div>
@@ -202,8 +203,8 @@
         layout: "fitColumns", //fit columns to width of table (optional)
         columns: [ //Define Table Columns
             {title: "Muscle", field: "muscle", width: 150},
-            {title: "Repetitions", field: "repetitions",width:150},
-            {title: "EV", field: "exertion_value", width:60},
+            {title: "Repetitions", field: "repetitions", width: 150},
+            {title: "EV", field: "exertion_value", width: 60},
 
             {
                 title: "Exertion Value", field: "exertion_value", hozAlign: "left", formatter: "progress",
